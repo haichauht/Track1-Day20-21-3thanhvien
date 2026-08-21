@@ -1,31 +1,30 @@
-# AI Support Log — Tạ Thị Thu Huyền · 2A202601782
+# AI Support Log — Huỳnh Thị Hải Châu · 2A202601912
 
-AI hỗ trợ tra cứu, soạn near-miss và tổng hợp thống kê. Human baseline, gold label,
-routing evaluator và verdict cuối do con người quyết định.
+AI được dùng để brainstorm, kiểm tra và soạn nháp; quyền chọn coverage, nhãn người và
+quyết định release vẫn thuộc con người.
 
 | Bước | AI đã giúp tôi ở đâu? | Tôi kiểm chứng thế nào? |
 |---|---|---|
-| Phase 2 | Chỉ ra claim/citation cần đọc kỹ và gợi ý format note | Tôi tự đọc câu hỏi, `expected_behavior`, answer và corpus rồi chấm đủ 30 rows trong CSV riêng |
-| Phase 2–3 | Gom pattern disagreement thành tiêu chí Yes/No quan sát được | Tôi đối chiếu near-miss thật, giữ blocker và chỉ dùng `UNCERTAIN` khi raw/context thật sự thiếu |
-| Phase 4 | Soạn cấu trúc judge prompt và ví dụ gần ranh giới | Tôi chạy từng prompt version trên cùng code-green set, lưu raw verdict và đọc confusion matrix/TPR/TNR |
-| Calibration | Tóm tắt các case judge lệch với human gold | Tôi đọc lại từng case; chỉ đổi một prompt variable rồi chạy lại để biết thay đổi nào có tác dụng |
-| Candidate v3 | Hỗ trợ đối chiếu judge signal với code gate và human rubric | Tôi xác nhận hai output riêng, 19 rows/judge, không có 429 và không dùng root `verdicts.jsonl` lỗi |
+| Phase 1 | Gợi ý dimension/value và paraphrase input synthetic sau khi nhóm khóa coverage | Tôi kiểm từng row có behavior/risk khác thật, loại biến chỉ làm đổi cách viết và giữ nhãn `synthetic-reviewed` |
+| Phase 1–2 | Tóm tắt phân bố 30 rows theo scope, set type, clarity và coverage | Tôi đếm lại từ `dataset-v1.jsonl` và đọc đủ 30 input/output trước khi gán nhãn |
+| Phase 4 | Gợi ý assertion cho schema, citation, quote và tool contract | Tôi chạy code trên 30 rows, đối chiếu citation fail với corpus và không cho LLM đảo kết quả deterministic |
+| Phase 5 | Gom danh sách quote fail và so candidate v2/v3 | Tôi kiểm `code-checks-v3.txt`, raw JSONL và row IDs trước khi đưa số vào scorecard |
+| Evidence | Soạn bảng artifact và kiểm tra liên kết | Tôi chỉ giữ file chạy thật có version; file scratch/error ở root không được dùng làm evidence |
 
 ## AI sai, hồi hộp hoặc làm mất coverage ở đâu?
 
-- Có đề xuất điều chỉnh nhãn để agreement đạt một con số mong muốn. Tôi bác bỏ và giữ
-  kết quả độc lập thật **29/30 = 96%**, kèm disagreement `sc-30`.
-- Groundedness v3 bắt thêm một false positive nhưng tạo false negatives mới; agreement
-  vẫn 86%. Tôi không diễn giải đó là “judge đã tốt hơn”.
-- Follow-up prompt v3 từng coi mọi câu hỏi retrieval/answer quality là ngoài corpus.
-  Tôi đọc lại corpus, bác precedent này và dùng v4.
-- Một judge chỉ nhìn quote ngắn nên fail `sc-16`; full cited section có đủ ba ceiling
-  signals, vì vậy human override thành pass.
+- Một gợi ý coi persona là dimension quyết định behavior; tôi loại vì persona chủ yếu
+  làm câu tự nhiên, còn coverage/scope/clarity mới đổi đáp án đúng.
+- AI có lúc coi “citation tồn tại” là đủ pass dù quote dịch hoặc dùng `...`; tôi giữ
+  rule span nguyên văn liên tiếp và để 11 rows v3 fail code gate.
+- Khi audit v3, AI từng yêu cầu `tool_calls` không rỗng ở mọi row. Tôi sửa lại:
+  out-of-scope có thể không search; câu in-scope mới bắt buộc qua tool contract.
+- AI không được phép suy ra production coverage từ 30 câu synthetic; hạn chế này được
+  giữ nguyên trong REPORT.
 
 ## Tôi đã tự sửa hoặc quyết định lại điều gì?
 
-- Chấm độc lập 30 rows và dùng note chỉ rõ tiêu chí blocker.
-- Giữ disagreement thật, tham gia chốt gold bằng rubric thay vì lấy đa số máy móc.
-- Không nâng Groundedness/Follow-up thành autonomous gate dù metric calibration cao.
-- Yêu cầu code gate chạy trước, hai judge dùng prompt/output riêng, và human xác nhận
-  nhãn cuối 7 pass/23 fail.
+- Chốt bốn dimension của Input Grid và giữ risk thành slice riêng.
+- Chấm độc lập 30 rows, giữ phiếu `sc-30` của mình trong disagreement evidence.
+- Giao các kiểm tra có referent tuyệt đối cho code và chạy code trước judge.
+- Xác nhận candidate v3 **HOLD** dù operational gate xanh, vì quote quality gate fail.
