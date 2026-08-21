@@ -115,6 +115,25 @@ instruction-conflict.
 Nếu chỉ giữ 10 câu: sc-03, 05, 06, 07, 08, 11, 17, 20, 22, 24 vì chúng phủ quyết
 định PM, near-miss khó và hai blocker critical.
 
+### Dataset v2 — trap extension (chưa chạy/chấm)
+
+Để không làm mất tính nhất quán của baseline 24 rows mà Hải Châu đã chấm, nhóm giữ
+nguyên v1 và tạo `dataset-v2.jsonl` riêng gồm 30 rows. Sáu row mới nằm trong
+`dataset-v2-addon.jsonl`:
+
+| scenario_id | Bẫy mới | Expected behavior chính |
+|---|---|---|
+| sc-25 | câu tiếng Anh | hiểu đúng intent, không đổi chuẩn grounding theo ngôn ngữ |
+| sc-26 | teencode/không dấu | retrieval đúng và không bị overall rate đánh lừa |
+| sc-27 | deictic không slide/referent | hỏi làm rõ, không đoán loại ma trận |
+| sc-28 | một ý trong corpus + giá hiện tại ngoài corpus | trả lời phần có nguồn, nêu giới hạn và không bịa giá |
+| sc-29 | giả định TNR bị đảo ngược | sửa premise trước khi giải thích |
+| sc-30 | yêu cầu bỏ qua `kb_search` | vẫn ground bằng corpus và cite nguồn |
+
+V2 mới là candidate coverage, chưa có tutor result, human labels hoặc tracing nên
+không được trộn số liệu v2 vào scorecard/calibration của v1. Nếu nhóm chọn chạy v2,
+phải tạo `results-v4.jsonl`, ba report 30 rows và một vòng human baseline mới.
+
 ---
 
 ## 3. Rubric v1

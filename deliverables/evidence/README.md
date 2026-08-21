@@ -10,6 +10,8 @@ Cần có đủ:
 | File | Lấy từ đâu | Là gì |
 |---|---|---|
 | `dataset-v1.jsonl` | `dataset.jsonl` (root) | Dataset nhóm chốt — đầu vào mọi lần chạy |
+| `dataset-v2.jsonl` | v1 + 6 trap candidates | Bản mở rộng 30 rows; chưa chạy/chấm, không thay thế baseline v1 |
+| `dataset-v2-addon.jsonl` | 6 rows mới | English, teencode, no-referent, mixed-scope, false premise, source bypass |
 | `results-v1.jsonl` (v2, v3...) | `results.jsonl` (root) | Output tutor thật: input, output JSON, `tool_calls`, tokens, cost từng câu |
 | `labels.csv` | Export từ `report.html` | Nhãn người của các thành viên (vòng chấm độc lập) |
 | `judge-prompt-v1.md` (v2...) | `eval/judge_prompt.md` | Prompt judge TỪNG VÒNG — copy trước mỗi lần sửa |
