@@ -33,6 +33,8 @@ def _warn_once(backend, err):
 
 class _Noop:
     backend = None
+    ok = False
+    last_error = None
 
     def log_run(self, name, inputs=None, outputs=None, metrics=None, metadata=None):
         pass
@@ -46,6 +48,8 @@ class _Braintrust:
 
     def __init__(self):
         import braintrust
+        self.ok = True
+        self.last_error = None
         self._logger = braintrust.init_logger(
             project=os.environ.get("BRAINTRUST_PROJECT", DEFAULT_PROJECT))
 
@@ -55,12 +59,16 @@ class _Braintrust:
             span.log(input=inputs, output=outputs, metrics=metrics, metadata=metadata)
             span.end()
         except Exception as e:
+            self.ok = False
+            self.last_error = str(e)
             _warn_once(self.backend, e)
 
     def flush(self):
         try:
             self._logger.flush()
         except Exception as e:
+            self.ok = False
+            self.last_error = str(e)
             _warn_once(self.backend, e)
 
 
@@ -69,6 +77,8 @@ class _LangSmith:
 
     def __init__(self):
         from langsmith import Client
+        self.ok = True
+        self.last_error = None
         self._client = Client()  # tự đọc LANGSMITH_API_KEY / LANGCHAIN_API_KEY
         self._project = os.environ.get("LANGSMITH_PROJECT", DEFAULT_PROJECT)
 
@@ -83,6 +93,8 @@ class _LangSmith:
                 name=name, run_type="chain", project_name=self._project,
                 inputs=inputs or {}, outputs=outputs or {}, extra=extra or None)
         except Exception as e:
+            self.ok = False
+            self.last_error = str(e)
             _warn_once(self.backend, e)
 
     def flush(self):
@@ -90,6 +102,8 @@ class _LangSmith:
             if hasattr(self._client, "flush"):
                 self._client.flush()
         except Exception as e:
+            self.ok = False
+            self.last_error = str(e)
             _warn_once(self.backend, e)
 
 

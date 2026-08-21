@@ -1,0 +1,8 @@
+Offline test suite after final code changes:
+
+Kết quả: 44 pass, 0 fail
+
+Các tầng đã chạy: text utils; corpus/retrieval; kb_search shape; JSON parser; slide
+context; provider resolver; mocked tool-calling loop; judge/report helpers; tracing
+error isolation. Live tests không chạy trong suite này; OpenAI API authentication đã
+được kiểm riêng với HTTP 200 cho cả tutor và judge.

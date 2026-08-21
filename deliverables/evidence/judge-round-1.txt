@@ -1,0 +1,25 @@
+Judge model: openai/gpt-4o
+Rows: 24
+
+Confusion matrix (rows = judge, columns = provisional review label):
+                 pass  fail  uncertain
+judge pass         12    10       0
+judge fail          1     1       0
+judge uncertain     0     0       0
+
+Agreement: 13/24 = 54.2%
+TPR (nhận đúng output tốt): 12/13 = 92.3%
+TNR (bắt đúng output xấu): 1/11 = 9.1%
+
+Pattern lệch:
+- Judge quá dễ dãi: 10 false pass, chủ yếu ở quote bị paraphrase/stitch.
+- Judge không có exact source text trong input nên không thể kiểm quote nguyên văn.
+- sc-24 bị false pass vì prompt không có expected_scope để biết row phải từ chối.
+- sc-16 là false fail: judge đòi từng dấu hiệu xuất hiện trong quote ngắn dù section
+  được cite có nội dung chi tiết hơn; đây cũng là triệu chứng thiếu source evidence.
+
+Quyết định vòng 2:
+- Giữ nguyên model và temperature.
+- Không thêm few-shot để tránh overfit 24 rows.
+- Thêm expected scope/behavior và exact text của cited sections làm referent.
+- Thêm decision order: scope -> quote fidelity -> claim support.

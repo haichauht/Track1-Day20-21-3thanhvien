@@ -1,0 +1,25 @@
+Judge model: openai/gpt-4o
+Rows: 24
+
+Confusion matrix (rows = judge, columns = provisional review label):
+                 pass  fail  uncertain
+judge pass         13     8       0
+judge fail          0     3       0
+judge uncertain     0     0       0
+
+Agreement: 16/24 = 66.7%
+TPR (nhận đúng output tốt): 13/13 = 100%
+TNR (bắt đúng output xấu): 3/11 = 27.3%
+
+Diff so với vòng 1:
+- Thêm Expected scope và Expected behavior.
+- Thêm exact text của cited sections làm referent.
+- Thêm decision order scope -> quote fidelity -> claim support.
+- Giữ nguyên model, temperature và không thêm few-shot.
+
+Kết quả:
+- Agreement tăng 12.5 điểm phần trăm; false negative sc-16 được sửa.
+- Bắt đúng sc-15, sc-18, sc-24 nhưng vẫn bỏ lọt 8/11 output xấu.
+- TNR 27.3% thấp hơn gate 80%; không đủ tin để tự động chấm quote fidelity.
+- Quyết định routing: quote fidelity giữ ở deterministic code; judge chỉ hỗ trợ
+  claim-level groundedness và mọi fail high-risk phải được con người audit.

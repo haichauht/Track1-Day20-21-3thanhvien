@@ -1,7 +1,7 @@
 """Chạy tutor trên toàn bộ dataset -> results.jsonl (kèm latency, tokens, chi phí).
 
 Cách dùng:  python3 eval/run_eval.py [dataset.jsonl]
-Mặc định đọc dataset.jsonl ở root repo; nếu chưa có thì copy data/dataset.example.jsonl làm mẫu.
+Mặc định đọc dataset.jsonl; nếu chưa có thì copy data/dataset.example.jsonl làm mẫu.
 Chạy TUẦN TỰ (không song song) để dễ đọc log và tránh vượt rate limit.
 
 Tracing (bài lab yêu cầu): đặt BRAINTRUST_API_KEY hoặc LANGSMITH_API_KEY trong .env —
@@ -12,7 +12,7 @@ bỏ qua lặng lẽ. Chi tiết trong README.md mục Tracing.
 import json, os, sys, time
 from pathlib import Path
 
-# tutor.py nằm ở tutor/ (khu vực sản phẩm) — thêm vào sys.path để import được
+# Tutor là sản phẩm ở tutor/; tracing là module cùng thư mục eval/.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tutor"))
 
 import tutor
@@ -57,8 +57,11 @@ def main():
         q = row["input"]
         print("[%d/%d] %s ... " % (i, len(rows), q[:60]), end="", flush=True)
         rec = {"scenario_id": row.get("scenario_id") or row.get("id") or "row-%d" % i,
-               "input": q}
-        slide = (row.get("metadata") or {}).get("slide")
+               "input": q,
+               "expected_scope": row.get("expected_scope"),
+               "expected_behavior": row.get("expected_behavior"),
+               "metadata": row.get("metadata") or {}}
+        slide = rec["metadata"].get("slide")
         if slide:
             rec["slide"] = slide  # giữ lại để judge/report chấm theo đúng bối cảnh
         try:
@@ -66,12 +69,16 @@ def main():
             cost = estimate_cost_usd(tutor.MODEL, meta["usage"])
             rec.update(output=output, raw_content=meta["raw_content"],
                        retrieved=meta["retrieved"], latency_s=meta["latency_s"],
+                       tool_calls=meta.get("tool_calls", []),
+                       steps=meta.get("steps"), finish_reason=meta.get("finish_reason"),
                        usage=meta["usage"], cost_usd=cost)
             total_cost += cost or 0
             _tracer.log_run(  # log trace: input, output, tool calls, tokens, cost
                 name="tutor-run",
                 inputs={"question": q, "slide": slide, "model": tutor.MODEL},
-                outputs=output,
+                outputs={"response": output,
+                         "tool_calls": meta.get("tool_calls", []),
+                         "retrieved": meta.get("retrieved", [])},
                 metadata={"steps": meta.get("steps"), "scenario_id": rec["scenario_id"]},
                 metrics={**{k: v for k, v in meta["usage"].items()
                             if isinstance(v, (int, float))},
@@ -93,11 +100,15 @@ def main():
           % (len(results), time.time() - t_start, total_cost))
     if _tracer.backend:
         _tracer.flush()
-        print("Đã log %d trace lên %s (project '%s')."
-              % (len(results), _tracer.backend,
-                 os.environ.get("BRAINTRUST_PROJECT") or os.environ.get("LANGSMITH_PROJECT")
-                 or "ai-evaluation"))
-    print("Bước tiếp: python3 eval/judge.py (chấm tự động) hoặc python3 eval/report.py (xem report)")
+        if getattr(_tracer, "ok", True):
+            print("Đã log %d trace lên %s (project '%s')."
+                  % (len(results), _tracer.backend,
+                     os.environ.get("BRAINTRUST_PROJECT") or os.environ.get("LANGSMITH_PROJECT")
+                     or "ai-evaluation"))
+        else:
+            print("TRACE THẤT BẠI trên %s — kiểm tra key/quyền rồi chạy lại."
+                  % _tracer.backend)
+    print("Bước tiếp: python3 judge.py (chấm tự động) hoặc python3 report.py (xem report)")
 
 if __name__ == "__main__":
     main()

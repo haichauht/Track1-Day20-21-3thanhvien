@@ -1,16 +1,15 @@
 """Chấm results.jsonl bằng LLM judge -> verdicts.jsonl, rồi đối chiếu labels.csv.
 
-Cách dùng (chạy từ root repo):
+Cách dùng (từ root repo):
   python3 eval/judge.py                # chấm tất cả các row
   python3 eval/judge.py sc-01 sc-03    # chỉ chấm các scenario_id được chọn
-Judge dùng prompt trong eval/judge_prompt.md (placeholder {{input}} {{answer}} {{sources}}).
+Judge dùng prompt trong eval/judge_prompt.md.
 Model judge mặc định khác model tutor (EVAL_JUDGE_MODEL, mặc định openai/gpt-4o-mini)
 để tránh tự chấm chéo cùng một model.
 """
 import csv, json, os, sys
 from pathlib import Path
 
-# tutor.py nằm ở tutor/ (khu vực sản phẩm) — thêm vào sys.path để import được
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tutor"))
 
 import tutor
@@ -20,9 +19,12 @@ import tracing
 _tracer = tracing.init_tracer()
 
 JUDGE_MODEL = os.environ.get("EVAL_JUDGE_MODEL", "openai/gpt-4o-mini")
-
-# judge_prompt.md nằm cạnh file này trong eval/ — resolve theo __file__, không theo cwd
 PROMPT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "judge_prompt.md")
+
+# Referent cho groundedness: judge phải thấy nội dung section gốc, nếu không chỉ có
+# thể đoán quote "trông có vẻ" đúng và sẽ bỏ lọt paraphrase/fabrication.
+_CORPUS_BY_ID = {(s["doc_id"], s["section_id"]): s["text"]
+                 for s in tutor.load_corpus()}
 
 def read_jsonl(path):
     if not os.path.exists(path):
@@ -48,9 +50,19 @@ def build_judge_prompt(rec, template):
     answer = json.dumps(rec.get("output"), ensure_ascii=False, indent=2)
     sources = json.dumps(rec.get("output", {}).get("sources", []),
                          ensure_ascii=False, indent=2)
+    evidence = []
+    for source in rec.get("output", {}).get("sources", []) or []:
+        key = (source.get("doc_id"), source.get("section_id"))
+        text = _CORPUS_BY_ID.get(key)
+        evidence.append({"doc_id": key[0], "section_id": key[1],
+                         "text": text if text is not None else "[SOURCE NOT FOUND]"})
+    source_evidence = json.dumps(evidence, ensure_ascii=False, indent=2)
     return (template.replace("{{input}}", input_text)
                     .replace("{{answer}}", answer)
-                    .replace("{{sources}}", sources))
+                    .replace("{{sources}}", sources)
+                    .replace("{{source_evidence}}", source_evidence)
+                    .replace("{{expected_scope}}", str(rec.get("expected_scope") or "unknown"))
+                    .replace("{{expected_behavior}}", str(rec.get("expected_behavior") or "unknown")))
 
 def judge_row(rec, template):
     prompt = build_judge_prompt(rec, template)
@@ -83,7 +95,7 @@ def print_confusion(verdicts, labels):
 def main():
     results = read_jsonl("results.jsonl")
     if not results:
-        sys.exit("Không thấy results.jsonl — chạy python3 eval/run_eval.py trước.")
+        sys.exit("Không thấy results.jsonl — chạy python3 run_eval.py trước.")
     if not tutor.get_api_key(JUDGE_MODEL):
         sys.exit("Chưa có API key cho judge model %s — xem .env.example." % JUDGE_MODEL)
     chosen = set(sys.argv[1:])
@@ -118,7 +130,11 @@ def main():
     print("Ghi %d verdict vào verdicts.jsonl" % len(verdicts))
     if _tracer.backend:
         _tracer.flush()
-        print("Đã log %d trace judge lên %s." % (len(verdicts), _tracer.backend))
+        if getattr(_tracer, "ok", True):
+            print("Đã log %d trace judge lên %s." % (len(verdicts), _tracer.backend))
+        else:
+            print("TRACE JUDGE THẤT BẠI trên %s — kiểm tra key/quyền rồi chạy lại."
+                  % _tracer.backend)
     print_confusion(verdicts, read_labels())
 
 if __name__ == "__main__":

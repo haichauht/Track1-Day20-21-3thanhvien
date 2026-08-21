@@ -16,6 +16,17 @@ Cần có đủ:
 | `verdicts-v1.jsonl` (v2...) | `verdicts.jsonl` (root) | Output judge từng vòng calibration |
 | `braintrust-link.md` | tự tạo | Link project Braintrust/LangSmith — trace mọi run |
 
+Artifact bổ sung của bài hiện tại:
+
+- `results-v1/v2/v3-traced.jsonl`, `verdicts-v1/v2/v3-traced.jsonl`: các vòng chạy có
+  version, trong đó v3 đã được xác minh trên LangSmith.
+- `code-checks-v1/v2.txt`, `manual-review-v1.csv`, `run-metrics.md`: số liệu thô cho
+  scorecard và routing.
+- `labels.csv`: placeholder gold hiện trống; `labels-provisional-ai.csv` chỉ dùng kiểm
+  pipeline, không phải human baseline.
+- `report-phase2-hai-chau/yen/huyen.html`: ba report blind độc lập.
+- `phase2-human-baseline-status.md`: checklist GATE 2 và trạng thái human-only.
+
 Số liệu trong mục 5 (Calibration Report) của `deliverables/REPORT.md` phải đối chiếu được với các
 file ở đây (confusion matrix, % agreement in ra từ `eval/judge.py`).
 

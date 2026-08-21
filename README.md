@@ -1,5 +1,16 @@
 # K3 Track 1 · Day 20–21 — AI Evaluation (eval-kit)
 
+## Bài làm nhóm
+
+- Thành viên: **Hải Châu — Yến — Huyền**.
+- Tutor: `openai/gpt-4o-mini`; judge: `openai/gpt-4o`.
+- Dataset: 24 scenarios; evidence gồm ba tutor runs và ba judge result versions.
+- LangSmith: 48 traces trong batch cuối (24 tutor + 24 judge), 0 lỗi.
+- Verdict draft: **HOLD / CHƯA SHIP** vì quote fidelity, groundedness, pedagogy và
+  critical slice chưa đạt gate.
+- Report A→Z: `deliverables/REPORT.md`; dữ liệu thô: `deliverables/evidence/`.
+- Phase 2 đang chờ ba thành viên hoàn tất blind review; không dùng nhãn AI làm gold.
+
 Repo làm bài capstone **AI Evaluation** của case **VLearn AI Tutor** — trợ giảng trả lời
 câu hỏi học viên, chỉ dựa trên tài liệu khóa học, output là JSON
 `{scope, answer, sources, followup_questions}`.
@@ -35,7 +46,7 @@ cp .env.example .env                   # 2. điền API key của provider bạn
 cp data/dataset.example.jsonl dataset.jsonl
 python3 tests/test_eval_kit.py         # 3. 44 test offline phải sạch hết
 python3 eval/run_eval.py                # 4. chạy tutor trên dataset -> results.jsonl
-python3 eval/report.py && open report.html   # 5. xem kết quả, gán nhãn
+python3 eval/report.py --blind --rater <tên> # 5. Phase 2: report không lộ judge/nhãn cũ
 ```
 
 Gợi ý: nếu test fail ngay tầng 2 (corpus), gần như chắc chắn bạn đang chạy sai thư mục —
@@ -46,7 +57,7 @@ Gợi ý: nếu test fail ngay tầng 2 (corpus), gần như chắc chắn bạn
 | Phase (theo file lab tổng) | Làm ở đâu | Trong repo này chạy gì |
 |---|---|---|
 | **P1. Thiết kế coverage** — chọn dimensions, tổ hợp, sinh câu hỏi | Giấy/sheet + AI chat | Chưa cần repo. Kết quả: viết vào `dataset.jsonl` (format xem `data/dataset.example.jsonl`, nhớ field `metadata.slide`) |
-| **P2. Human baseline** — chạy dataset, chấm tay | Repo | `python3 eval/run_eval.py` → `python3 eval/report.py` → mở `report.html` gán nhãn → Export `labels-<tên>.csv` → `python3 eval/agreement.py labels-*.csv` đo đồng thuận |
+| **P2. Human baseline** — chạy dataset, chấm tay | Repo | `python3 eval/run_eval.py` → `python3 eval/report.py --blind --rater <tên>` → Export `labels-<tên>.csv` → `python3 eval/agreement.py labels-*.csv` đo đồng thuận |
 | **P3. Rubric + routing** | Thảo luận nhóm | Không chạy repo. Viết vào mục 3 (Rubric v1) và mục 4 (Routing Map) trong `deliverables/REPORT.md` |
 | **P4. Scale & calibrate judge** | Repo | `python3 eval/code_checks.py` (làn code) → sửa `eval/judge_prompt.md` → `python3 eval/judge.py` → đọc confusion matrix + % agreement. Sửa ít một thứ, chạy lại — mỗi vòng copy `eval/judge_prompt.md` + `verdicts.jsonl` ra `deliverables/evidence/` |
 | **P5. Đọc kết quả, đặt ngưỡng** | Repo | `results.jsonl` có sẵn latency/tokens/cost từng câu; `report.html` để đọc theo slice |
@@ -63,7 +74,8 @@ trước khi chạy — mọi run tutor/judge log thành trace, link project là
 ```bash
 python3 eval/run_eval.py      # 1. chạy tutor trên dataset.jsonl      -> results.jsonl
 python3 eval/code_checks.py   # 2. làn code: rule thuần Python trên results (không tốn API)
-python3 eval/report.py        # 3. sinh report.html -> mở, gán nhãn người, Export labels.csv
+python3 eval/report.py --blind --rater <tên>  # 3. Phase 2: report độc lập, ẩn judge/nhãn cũ
+python3 eval/report.py        # report tổng hợp sau calibration
 python3 eval/agreement.py labels-*.csv   # 4. đo đồng thuận giữa các thành viên
 python3 eval/judge.py         # 5. judge chấm theo judge_prompt.md -> verdicts.jsonl + confusion matrix
 ```
@@ -99,8 +111,11 @@ Chạy dataset khác: `python3 eval/run_eval.py ten-file.jsonl`.
 
 ### Bước 4 — `eval/report.py`: nhìn và gán nhãn
 
-- `report.html` tự chứa mọi dữ liệu: câu hỏi, slide context, câu trả lời, nguồn trích,
-  verdict judge. Bấm pass/fail/uncertain và nhập **note ngắn** (vd tiêu chí gây
+Trong Phase 2 luôn dùng `--blind --rater <tên>` để tách localStorage, ẩn verdict judge
+và không nạp nhãn cũ. Ba report blind sẵn có nằm trong `deliverables/evidence/`.
+
+- Report tự chứa mọi dữ liệu: câu hỏi, slide context, câu trả lời và nguồn trích;
+  chế độ tổng hợp mới hiện verdict judge. Bấm pass/fail/uncertain và nhập **note ngắn** (vd tiêu chí gây
   fail: `fail: citation`) để gán nhãn người (lưu trong trình duyệt).
 - Bấm **Export labels.csv** → lưu đè `labels.csv` → chạy lại `eval/judge.py` để xem agreement.
 

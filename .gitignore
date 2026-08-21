@@ -1,4 +1,5 @@
 .env
+.venv/
 __pycache__/
 *.pyc
 # artifacts chạy sinh ra — sinh viên tự tạo khi chạy (ở root repo)
@@ -7,4 +8,8 @@ results.jsonl
 verdicts.jsonl
 labels.csv
 labels-*.csv
-report.html
+/report*.html
+
+# Human-label evidence phải được nộp dù scratch labels ở root bị ignore.
+!/deliverables/evidence/labels.csv
+!/deliverables/evidence/labels-*.csv

@@ -4,7 +4,7 @@ Model nhận tool kb_search (BM25 local trên corpus/), TỰ quyết định g�
 lần với truy vấn nào, rồi trả JSON theo contract — giống hệt cơ chế agentic của
 platform, chỉ khác môi trường chạy (Python local thay vì Next.js).
 
-Dùng trực tiếp trong REPL:  python3 -i tutor/tutor.py  ->  ask_tutor("câu hỏi")
+Dùng trực tiếp trong REPL:  python3 -i tutor.py  ->  ask_tutor("câu hỏi")
 Hoặc được run_eval.py import để chạy cả dataset.
 """
 import json, math, os, re, time, unicodedata
@@ -53,8 +53,7 @@ Lưu ý:
 - Nếu tool kb_search trả về lỗi hoặc không có kết quả, hãy nói rõ trong "answer" thay vì phỏng đoán.
 """
 
-# --- Cấu hình: đọc từ env hoặc file .env (ở ROOT repo), KHÔNG hardcode key
-# BASE_DIR = thư mục tutor/ (corpus/ nằm cùng); ROOT_DIR = root repo (.env ở đó).
+# --- Cấu hình: corpus ở tutor/, .env ở root repo; KHÔNG hardcode key
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
 
