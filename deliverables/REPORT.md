@@ -65,7 +65,9 @@ nhiều lượt, file đính kèm và trace production thật.
 `deliverables/evidence/input-candidates-v1.csv` lưu đúng 30 candidates (2 câu cho mỗi
 combination), gồm style ngắn/cụt, dài vòng, thiếu context và hơi cộc. AI chỉ sinh câu;
 không tự thêm combination hoặc giải thích tutor nên trả lời thế nào. Hai cột
-`human_decision` và `human_edit` đang để trống để người nộp tự quyết Keep/Rewrite/Reject.
+`ai_recommendation` và `ai_rationale` là gợi ý sơ bộ; một candidate tiếng Anh được
+giữ trong cb-05 để kiểm biến thể ngôn ngữ mà không tạo combination mới. Hai cột
+`human_decision` và `human_edit` vẫn để trống để người nộp tự quyết Keep/Rewrite/Reject.
 Phase 1 chỉ hoàn tất sau khi các cột này được điền và các câu Keep/Rewrite được đối
 chiếu lại với `dataset-v1.jsonl`.
 
