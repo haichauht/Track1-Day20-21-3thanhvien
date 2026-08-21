@@ -20,6 +20,8 @@ Artifact bổ sung của bài hiện tại:
 
 - `results-v1/v2/v3-traced.jsonl`, `verdicts-v1/v2/v3-traced.jsonl`: các vòng chạy có
   version, trong đó v3 đã được xác minh trên LangSmith.
+- `input-candidates-v1.csv`: 30 paraphrase AI (2 câu × 15 combinations), chờ người
+  nộp điền `human_decision` Keep/Rewrite/Reject và `human_edit` nếu Rewrite.
 - `code-checks-v1/v2.txt`, `manual-review-v1.csv`, `run-metrics.md`: số liệu thô cho
   scorecard và routing.
 - `labels.csv`: placeholder gold hiện trống; `labels-provisional-ai.csv` chỉ dùng kiểm
