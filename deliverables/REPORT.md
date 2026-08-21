@@ -303,8 +303,9 @@ gold hoàn tất.
 
 - Agreement vòng độc lập: **N/A — đang chờ Hải Châu, Yến, Huyền hoàn tất ba report
   blind trong evidence**.
-- CSV Hải Châu hiện có 24/30 nhãn từ report cũ; cần bổ sung sc-25–sc-30. Không tính
-  agreement giữa file 24 rows và hai report 30 rows.
+- CSV Hải Châu hiện có 24/30 nhãn từ report cũ, lưu tại
+  `labels-hai-chau-legacy24.csv`; cần bổ sung sc-25–sc-30. Không tính agreement giữa
+  file 24 rows và hai report 30 rows.
 - Không dùng nhãn AI thay thế. Sau khi đủ ba CSV, giữ agreement trước đồng thuận, liệt
   kê case/note bất đồng rồi chốt `labels.csv` vàng.
 - Mâu thuẫn provisional lớn nhất là quote “khớp tinh thần” nhưng không nguyên văn;

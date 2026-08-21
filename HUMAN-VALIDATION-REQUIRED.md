@@ -5,7 +5,8 @@ pipeline và tạo provisional review để tiết kiệm thời gian, nhưng ng
 
 1. Mở `deliverables/evidence/report-phase2-hai-chau.html`, chấm độc lập 30 rows và Export CSV. Report này
    đã ẩn judge và nhãn AI để tránh bias. CSV Hải Châu cũ chỉ có 24/30 rows; cần chấm
-   thêm sc-25 đến sc-30 trong report mới trước khi dùng để đo agreement.
+   thêm sc-25 đến sc-30 trong report mới trước khi dùng để đo agreement. Bản 24 nhãn
+   cũ được giữ tại `deliverables/evidence/labels-hai-chau-legacy24.csv`.
 2. Đặc biệt đọc sc-02, sc-03, sc-05, sc-07, sc-08, sc-11, sc-12, sc-13, sc-15,
    sc-18, sc-24, đồng thời kiểm kỹ sáu trap sc-25–sc-30.
 3. Ba người mở report mang tên mình trong `deliverables/evidence/`, export file riêng

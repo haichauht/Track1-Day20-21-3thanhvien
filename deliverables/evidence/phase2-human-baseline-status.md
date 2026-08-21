@@ -29,8 +29,9 @@
    ghi rõ tiêu chí: `answer_grounded`, `citation`, `followup_quality`, `scope` hoặc
    `schema_tool`, kèm lý do ngắn.
 3. Mỗi người bấm **Export CSV** để có `labels-<tên>.csv`.
-   CSV Hải Châu đã nhận trước khi mở rộng mới phủ 24/30; phải bổ sung sc-25–sc-30
-   hoặc chấm lại trong HTML 30 rows trước khi chạy agreement.
+   CSV Hải Châu đã nhận trước khi mở rộng được giữ tại
+   `labels-hai-chau-legacy24.csv` và mới phủ 24/30; phải bổ sung sc-25–sc-30 hoặc
+   chấm lại trong HTML 30 rows trước khi chạy agreement.
 4. Khi đủ ba file, chạy:
 
    ```powershell

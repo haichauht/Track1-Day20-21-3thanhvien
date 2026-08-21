@@ -32,6 +32,8 @@ Artifact bổ sung của bài hiện tại:
   tách rõ hai tập số liệu.
 - `labels.csv`: placeholder gold hiện trống; `labels-provisional-ai.csv` chỉ dùng kiểm
   pipeline, không phải human baseline.
+- `labels-hai-chau-legacy24.csv`: 24 nhãn độc lập Hải Châu đã export trước khi mở
+  rộng dataset; giữ nguyên để ghép với sáu nhãn sc-25–sc-30 sau khi Châu chấm bổ sung.
 - `report-phase2-hai-chau/yen/huyen.html`: ba report blind độc lập, mỗi report đủ 30 rows.
 - `report-legacy24.html`: report cũ 24 rows chỉ để audit lịch sử.
 - `phase2-human-baseline-status.md`: checklist GATE 2 và trạng thái human-only.
