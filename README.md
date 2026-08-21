@@ -4,12 +4,15 @@
 
 - Thành viên: **Hải Châu — Yến — Huyền**.
 - Tutor: `openai/gpt-4o-mini`; judge: `openai/gpt-4o`.
-- Dataset: 24 scenarios; evidence gồm ba tutor runs và ba judge result versions.
-- LangSmith: 48 traces trong batch cuối (24 tutor + 24 judge), 0 lỗi.
+- Dataset v1 chính thức: 30 scenarios; 24 rows ban đầu được lưu riêng dưới tên
+  `legacy24`, sáu trap mới đã chạy tutor và được gộp vào v1.
+- LangSmith: 54 traces đã ghi nhận (30 tutor + 24 judge), 0 lỗi; judge/calibration
+  hiện vẫn là số liệu legacy 24 rows và phải chạy lại sau human baseline 30 rows.
 - Verdict draft: **HOLD / CHƯA SHIP** vì quote fidelity, groundedness, pedagogy và
   critical slice chưa đạt gate.
 - Report A→Z: `deliverables/REPORT.md`; dữ liệu thô: `deliverables/evidence/`.
-- Phase 2 đang chờ ba thành viên hoàn tất blind review; không dùng nhãn AI làm gold.
+- Phase 2 đang chờ ba thành viên hoàn tất ba blind report 30 rows; CSV cũ của Hải
+  Châu mới phủ 24/30 nên cần chấm bổ sung sáu row. Không dùng nhãn AI làm gold.
 
 Repo làm bài capstone **AI Evaluation** của case **VLearn AI Tutor** — trợ giảng trả lời
 câu hỏi học viên, chỉ dựa trên tài liệu khóa học, output là JSON
