@@ -4,15 +4,14 @@
 
 - Thành viên: **Hải Châu — Yến — Huyền**.
 - Tutor: `openai/gpt-4o-mini`; judge: `openai/gpt-4o`.
-- Dataset v1 chính thức: 30 scenarios; 24 rows ban đầu được lưu riêng dưới tên
-  `legacy24`, sáu trap mới đã chạy tutor và được gộp vào v1.
-- LangSmith: 54 traces đã ghi nhận (30 tutor + 24 judge), 0 lỗi; judge/calibration
-  hiện vẫn là số liệu legacy 24 rows và phải chạy lại sau human baseline 30 rows.
+- Dataset v1 chính thức và duy nhất: 30 scenarios.
+- LangSmith: tutor canonical đã chạy đủ 30/30, 0 lỗi; judge canonical sẽ chạy sau
+  khi có human gold 30 rows.
 - Verdict draft: **HOLD / CHƯA SHIP** vì quote fidelity, groundedness, pedagogy và
   critical slice chưa đạt gate.
 - Report A→Z: `deliverables/REPORT.md`; dữ liệu thô: `deliverables/evidence/`.
-- Phase 2 đang chờ ba thành viên hoàn tất ba blind report 30 rows; CSV cũ của Hải
-  Châu mới phủ 24/30 nên cần chấm bổ sung sáu row. Không dùng nhãn AI làm gold.
+- Phase 2: `labels-hai-chau.csv` đã đủ 30 rows; đang chờ Yến và Huyền hoàn tất hai
+  file nhãn 30 rows còn lại trước khi đo agreement và chốt gold.
 
 Repo làm bài capstone **AI Evaluation** của case **VLearn AI Tutor** — trợ giảng trả lời
 câu hỏi học viên, chỉ dựa trên tài liệu khóa học, output là JSON
@@ -202,9 +201,10 @@ của file lab tổng). Từ repo này, copy sang `deliverables/evidence/` của
 - `dataset.jsonl` → `deliverables/evidence/dataset-v1.jsonl` — dataset nhóm chốt (đầu vào).
 - `results.jsonl` → `deliverables/evidence/results-v1.jsonl` (v2, v3... mỗi lần chạy lại) — output
   tutor thật, có cả `tool_calls`, tokens, cost từng câu.
-- `verdicts.jsonl` → `deliverables/evidence/verdicts-v1.jsonl` (v2... từng vòng calibration).
-- `eval/judge_prompt.md` → `deliverables/evidence/judge-prompt-v1.md` (copy MỖI LẦN trước khi sửa).
-- `labels.csv` (export từ report.html) → `deliverables/evidence/labels.csv` — nhãn người.
+- `verdicts.jsonl` → `deliverables/evidence/verdicts-v1-30.jsonl` sau khi judge đã chạy đủ 30 rows.
+- `eval/judge_prompt.md` → `deliverables/evidence/judge-prompt-v1-30.md` cùng lần chạy đủ 30 rows.
+- CSV export của mỗi rater → `labels-<tên>.csv`, mỗi file phải đủ 30 rows; sau agreement
+  chốt `deliverables/evidence/labels-gold-v1.csv` đủ 30 rows.
 - Số liệu agreement/confusion matrix in ra từ `eval/judge.py` → chép vào
   mục 5 của `deliverables/REPORT.md`.
 

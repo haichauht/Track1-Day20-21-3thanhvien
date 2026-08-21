@@ -17,18 +17,19 @@ Track1_Day21_MHV_HoVaTen/
 │   └── evidence/                  # DATA THÔ — input/output thật của từng bước chạy
 │       ├── dataset-v1.jsonl       # dataset nhóm chốt (đầu vào mọi lần chạy)
 │       ├── results-v1.jsonl       # output tutor (mỗi row: input, output JSON, tool_calls, tokens, cost)
-│       ├── labels.csv             # nhãn người của 3 thành viên (vòng chấm độc lập)
-│       ├── judge-prompt-v1.md     # judge prompt vòng 1
-│       ├── judge-prompt-v2.md     # judge prompt vòng 2 (diff với v1 phải giải thích trong mục 5 của REPORT.md)
-│       ├── verdicts-v1.jsonl      # output judge vòng 1
-│       ├── verdicts-v2.jsonl      # output judge vòng 2
+│       ├── labels-hai-chau.csv    # nhãn Hải Châu đủ 30 rows
+│       ├── labels-yen.csv         # tạo khi Yến chấm đủ 30 rows
+│       ├── labels-huyen.csv       # tạo khi Huyền chấm đủ 30 rows
+│       ├── labels-gold-v1.csv     # tạo sau agreement, đủ 30 rows
+│       ├── judge-prompt-v1-30.md  # tạo khi chạy judge canonical đủ 30 rows
+│       ├── verdicts-v1-30.jsonl   # output judge canonical đủ 30 rows
 │       └── braintrust-link.md     # link project Braintrust/LangSmith — trace mọi run
 └── ai-support-log.md          # bạn dùng AI ở đâu, AI sai ở đâu, bạn quyết lại gì
 ```
 
-Quy ước phiên bản: mỗi lần chạy lại là một version mới — `results-v2.jsonl`,
-`verdicts-v3.jsonl`... Không ghi đè file cũ; calibration report cần đối chiếu được
-từng vòng.
+Quy ước phiên bản: mỗi artifact lưu vào evidence phải đủ 30 rows. Mỗi lần chạy lại là
+một version mới — `results-v2-30.jsonl`, `verdicts-v2-30.jsonl`... Không đưa snapshot
+partial vào thư mục nộp.
 
 ## Checklist trước khi nộp
 
